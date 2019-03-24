@@ -20,7 +20,7 @@ use base64;
 use Error;
 use num::bigint::{BigUint, ToBigUint};
 use num::cast::ToPrimitive;
-use rand::distributions::{IndependentSample, Range};
+use rand::distributions::{Distribution, Uniform};
 use rand;
 use dot::{Dot, SiteId, Counter};
 use serde::{Serialize, Serializer, Deserialize, Deserializer};
@@ -119,18 +119,18 @@ impl Uid {
             if Uid::use_boundary_plus_strategy(level) {
                 let lo_bound = pos1+1;
                 let hi_bound = cmp::min(pos1+BOUNDARY, pos2);
-                Range::new(lo_bound, hi_bound)
+                Uniform::new(lo_bound, hi_bound)
             } else if pos2 <= BOUNDARY {
                 let lo_bound = pos1+1;
                 let hi_bound = pos2;
-                Range::new(lo_bound, hi_bound)
+                Uniform::new(lo_bound, hi_bound)
             } else {
                 let lo_bound = cmp::max(pos1+1, pos2-BOUNDARY);
                 let hi_bound = pos2;
-                Range::new(lo_bound, hi_bound)
+                Uniform::new(lo_bound, hi_bound)
             };
         let mut rng = rand::thread_rng();
-        range.ind_sample(&mut rng)
+        range.sample(&mut rng)
     }
 
     // TODO: Use Boundary- for arrays on odd levels.
